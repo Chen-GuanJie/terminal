@@ -1,4 +1,4 @@
-#include "realtimeplot.h"
+﻿#include "realtimeplot.h"
 #include "ui_realtimeplot.h"
 
 realtimeplot::realtimeplot(QWidget *parent) :
@@ -6,8 +6,9 @@ realtimeplot::realtimeplot(QWidget *parent) :
     ui(new Ui::realtimeplot)
 {
     ui->setupUi(this);
-    mPlot = new QCustomPlot(this);
 
+    mPlot = new QCustomPlot(this);
+    ui->verticalLayout->addWidget(mPlot);
     // configure plot to have two right axes:
     mPlot->yAxis->setTickLabels(false);
     connect(mPlot->yAxis2, SIGNAL(rangeChanged(QCPRange)), mPlot->yAxis, SLOT(setRange(QCPRange))); // left axis only mirrors inner right axis
@@ -29,19 +30,29 @@ realtimeplot::realtimeplot(QWidget *parent) :
     mTag2->setPen(mGraph2->pen());
 
     connect(&mDataTimer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-    mDataTimer.start(40);
+    mDataTimer.start(50);
 }
 
 realtimeplot::~realtimeplot()
 {
     delete ui;
 }
+template<typename T>
+void realtimeplot::set_data_source(T* source,int* num){
+    this->source=source;
+    source_num=num;
+}
 
 void realtimeplot::timerSlot()
 {
   // calculate and add a new data point to each graph:
   mGraph1->addData(mGraph1->dataCount(), qSin(mGraph1->dataCount()/50.0)+qSin(mGraph1->dataCount()/50.0/0.3843)*0.25);
-  mGraph2->addData(mGraph2->dataCount(), qCos(mGraph2->dataCount()/50.0)+qSin(mGraph2->dataCount()/50.0/0.4364)*0.15);
+  uint16_t i=0;
+  uint16_t num=mGraph2->dataCount();
+  //for (;i<*source_num;i++){
+   //   mGraph2->addData(num+i, (double)source[i]);
+  //}
+  //mGraph2->addData(mGraph2->dataCount(), 1);
 
   // make key axis range scroll with the data:
   mPlot->xAxis->rescale();
@@ -51,7 +62,7 @@ void realtimeplot::timerSlot()
 
   // update the vertical axis tag positions and texts to match the rightmost data point of the graphs:
   double graph1Value = mGraph1->dataMainValue(mGraph1->dataCount()-1);
-  double graph2Value = mGraph2->dataMainValue(mGraph2->dataCount()-1);
+  double graph2Value = mGraph2->dataMainValue(mGraph2->dataCount()-i);
   mTag1->updatePosition(graph1Value);
   mTag2->updatePosition(graph2Value);
   mTag1->setText(QString::number(graph1Value, 'f', 2));

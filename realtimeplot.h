@@ -1,4 +1,4 @@
-#ifndef REALTIMEPLOT_H
+﻿#ifndef REALTIMEPLOT_H
 #define REALTIMEPLOT_H
 
 #include <QWidget>
@@ -16,6 +16,8 @@ class realtimeplot : public QWidget
 public:
     explicit realtimeplot(QWidget *parent = nullptr);
     ~realtimeplot();
+    template<typename T>
+    void set_data_source(T* source,int* num);
 private slots:
   void timerSlot();
 
@@ -27,7 +29,8 @@ private:
     AxisTag *mTag1;
     AxisTag *mTag2;
     QTimer mDataTimer;
-
+    double* source;
+    int* source_num;
 };
 
 #endif // REALTIMEPLOT_H
