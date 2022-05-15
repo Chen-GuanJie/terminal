@@ -72,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
     serial = new QSerialPort(this);
 //! [1]
     settings = new SettingsDialog;
-
+    cpg = new cpg_api();
     ui->actionConnect->setEnabled(true);
     ui->actionDisconnect->setEnabled(false);
     ui->actionQuit->setEnabled(true);
@@ -104,7 +104,47 @@ MainWindow::MainWindow(QWidget *parent) :
      ui->single_16->set_serial_port(serial,16,sd);
      ui->single_17->set_serial_port(serial,17,sd);
      ui->single_18->set_serial_port(serial,18,sd);
+     QStringList strList;
+     strList<<"1"<<"2"<<"3"<<"4"<<"5"<<"6"<<"7"<<"8";
+    ui->comboBoxx_1->addItems(strList);
+    ui->comboBoxx_2->addItems(strList);
+    ui->comboBoxx_3->addItems(strList);
+    ui->comboBoxx_4->addItems(strList);
+    ui->comboBoxx_5->addItems(strList);
+    ui->comboBoxx_6->addItems(strList);
+    ui->comboBoxx_7->addItems(strList);
+    ui->comboBoxx_8->addItems(strList);
+    ui->comboBoxx_9->addItems(strList);
+    ui->comboBoxx_10->addItems(strList);
+    ui->comboBoxx_11->addItems(strList);
+    ui->comboBoxx_12->addItems(strList);
+    ui->comboBoxx_13->addItems(strList);
+    ui->comboBoxx_14->addItems(strList);
+    ui->comboBoxx_15->addItems(strList);
+    ui->comboBoxx_16->addItems(strList);
+    ui->comboBoxx_17->addItems(strList);
+    ui->comboBoxx_18->addItems(strList);
 
+    ui->comboBoxx_1->setCurrentIndex(0);
+    ui->comboBoxx_2->setCurrentIndex(0);
+    ui->comboBoxx_3->setCurrentIndex(0);
+    ui->comboBoxx_4->setCurrentIndex(0);
+    ui->comboBoxx_5->setCurrentIndex(0);
+    ui->comboBoxx_6->setCurrentIndex(0);
+
+    ui->comboBoxx_7->setCurrentIndex(1);
+    ui->comboBoxx_8->setCurrentIndex(1);
+    ui->comboBoxx_9->setCurrentIndex(1);
+    ui->comboBoxx_10->setCurrentIndex(1);
+    ui->comboBoxx_11->setCurrentIndex(2);
+    ui->comboBoxx_12->setCurrentIndex(2);
+    ui->comboBoxx_13->setCurrentIndex(2);
+    ui->comboBoxx_14->setCurrentIndex(2);
+    ui->comboBoxx_15->setCurrentIndex(3);
+    ui->comboBoxx_16->setCurrentIndex(3);
+    ui->comboBoxx_17->setCurrentIndex(3);
+    ui->comboBoxx_18->setCurrentIndex(3);
+on_pushButton_7_clicked();
     connect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
             this, &MainWindow::handleError);
 
@@ -221,17 +261,133 @@ void MainWindow::on_pushButton_4_clicked()
 {
     if(sd->able_to_send){
         sd->able_to_send=false;
-        uint8_t *tosend =new uint8_t[10];
-        for (int i=1;i<=sd->moto_num;i++){
-            sd->set_tx_angle(500,i);
+        uint8_t *tosend =new uint8_t[7+3*sd->moto_num];
+        for (int i=0;i<sd->moto_num;i++){
+            sd->set_tx_angle(sd->mp[i].mid_angle,(uint8_t)i);
         }
+        sd->set_sendTime(500);
         sd->moveServos(tosend);
-        serial->write((const char*)tosend,10);
+        serial->write((const char*)tosend,7+3*sd->moto_num);
+        //delete []tosend;
     }
 }
-void MainWindow::on_pushButton_settime_clicked()
+#include "cpg_api.h"
+void MainWindow::on_pushButton_5_clicked()
 {
-    QString t= ui->lineEdit_4->text();
+    //const double dv[18]=sd->b;
+    cpg_send = new uint8_t[7+3*sd->moto_num];
+    cpg->run(sd->b,sd->t);
+    cpgTimer = new QTimer();
+    connect(this->cpgTimer, SIGNAL(timeout()), this, SLOT(cpgtimerSlot()));
+    cpgTimer->start(cpg_pird);
+}
+
+void MainWindow::cpgtimerSlot(){
+    switch(cpg->step(cpg_pird)){
+        case 0:
+            break;
+        case 1:
+            /*for (int i=0;i<sd->moto_num;i++){
+                sd->set_tx_angle((uint16_t)round(sd->mp[i+1].mid_angle+cpg_data_ptr[i]*1000/360),(uint8_t)i+1);
+            }
+            for (int i=0;i<sd->moto_num;i++){
+                std::cout<<cpg_data_ptr[i]<<' ';
+            }
+            std::cout<<std::endl;*/
+
+            sd->update_para(cpg->step_data,cpg->step_time_data);
+            sd->moveServos(cpg_send);
+            serial->write((const char*)cpg_send,7+3*sd->moto_num);
+            break;
+        case 2:
+            cpgTimer->stop();
+            delete [] cpg_send;
+            break;
+    }
+}
+
+void MainWindow::on_pushButton_pressed(){
+
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    cpgTimer->stop();
+    delete [] cpg_send;
+}
+
+void MainWindow::on_pushButton_7_clicked()
+{
+    sd->group[0] = ui->comboBoxx_1->currentIndex();//获得索引
+    sd->group[1] = ui->comboBoxx_2->currentIndex();//获得索引
+    sd->group[2] = ui->comboBoxx_3->currentIndex();//获得索引
+    sd->group[3] = ui->comboBoxx_4->currentIndex();//获得索引
+    sd->group[4] = ui->comboBoxx_5->currentIndex();//获得索引
+    sd->group[5] = ui->comboBoxx_6->currentIndex();//获得索引
+    sd->group[6] = ui->comboBoxx_7->currentIndex();//获得索引
+    sd->group[7] = ui->comboBoxx_8->currentIndex();//获得索引
+    sd->group[8] = ui->comboBoxx_9->currentIndex();//获得索引
+    sd->group[9] = ui->comboBoxx_10->currentIndex();//获得索引
+    sd->group[10] = ui->comboBoxx_11->currentIndex();//获得索引
+    sd->group[11] = ui->comboBoxx_12->currentIndex();//获得索引
+    sd->group[12] = ui->comboBoxx_13->currentIndex();//获得索引
+    sd->group[13] = ui->comboBoxx_14->currentIndex();//获得索引
+    sd->group[14] = ui->comboBoxx_15->currentIndex();//获得索引
+    sd->group[15] = ui->comboBoxx_16->currentIndex();//获得索引
+    sd->group[16] = ui->comboBoxx_17->currentIndex();//获得索引
+    sd->group[17] = ui->comboBoxx_18->currentIndex();//获得索引
+}
+
+void MainWindow::on_pushButton_t_clicked()
+{
+    QString s="周期:";
+    sd->t=ui->lineEdit_3->text().toDouble();
+    ui->label->setText(s.append(QString::number(sd->t)));
+
+}
+
+void MainWindow::on_pushButton_2_clicked(bool checked)
+{
+    Qt::CheckState cs=Qt::Checked;
+
+        if(checked)
+        {
+            for (int i=0;i<sd->moto_num;i++) {
+                sd->enable[i]=1;
+            }
+
+        }
+        else
+        {   cs=Qt::Unchecked;
+            for (int i=0;i<sd->moto_num;i++) {
+                sd->enable[i]=1;
+            }
+        }
+        ui->single_1->reset_check(cs);
+        ui->single_2->reset_check(cs);
+        ui->single_3->reset_check(cs);
+        ui->single_4->reset_check(cs);
+        ui->single_5->reset_check(cs);
+        ui->single_6->reset_check(cs);
+        ui->single_7->reset_check(cs);
+        ui->single_8->reset_check(cs);
+        ui->single_9->reset_check(cs);
+        ui->single_10->reset_check(cs);
+        ui->single_11->reset_check(cs);
+        ui->single_12->reset_check(cs);
+        ui->single_13->reset_check(cs);
+        ui->single_14->reset_check(cs);
+        ui->single_15->reset_check(cs);
+        ui->single_16->reset_check(cs);
+        ui->single_17->reset_check(cs);
+        ui->single_18->reset_check(cs);
+
+
+}
+
+void MainWindow::on_cpushButton_9_clicked()
+{
+    QString t= ui->clineEdit_6->text();
     try {
         sd->set_sendTime((uint16_t)t.toInt());
     } catch (_exception) {
@@ -239,15 +395,61 @@ void MainWindow::on_pushButton_settime_clicked()
     }
     QString a="设置为：";
     a.append(t);
-    ui->lineEdit_4->setText(a);
+    ui->clineEdit_6->setText(a);
 }
-#include "cpg_api.h"
-void MainWindow::on_pushButton_5_clicked()
+
+void MainWindow::on_cpushButton_8_clicked()
 {
-    const double dv[18]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
-    retval rv= cpg_api::run(dv,1);
-    for (int var = 0; var < rv.t_size; ++var) {
-        std::cout<<rv.t[var]<<std::endl;
+    QString t= ui->clineEdit_5->text();
+    try {
+        cpg_pird=(uint16_t)t.toInt();
+    } catch (_exception) {
+        QString a="err";
+        return;
     }
-    //ui->textBrowser->setText();
+    QString a="设置为：";
+    a.append(t);
+    ui->clineEdit_5->setText(a);
+}
+
+void MainWindow::on_cpushButton_settime_clicked()
+{
+    QString t= ui->clineEdit_4->text();
+    try {
+        timer->reset_time((uint16_t)t.toInt());
+    } catch (_exception) {
+        QString a="err";
+        return;
+    }
+    QString a="设置为：";
+    a.append(t);
+    ui->clineEdit_4->setText(a);
+
+}
+
+void MainWindow::on_pushButton_dz_clicked()
+{
+    if(sd->able_to_send){
+        sd->able_to_send=false;
+        uint8_t *tosend =new uint8_t[7];
+        sd->runactiongroup(tosend,ui->spinBox_dz3->value(),ui->spinBox_dz->value());
+        serial->write((const char*)tosend,7);
+        delete []tosend;
+    }
+}
+
+void MainWindow::on_pushButton_dz2_clicked()
+{
+
+}
+
+void MainWindow::on_pushButton_dz3_clicked()
+{
+    if(sd->able_to_send){
+        sd->able_to_send=false;
+        uint8_t *tosend =new uint8_t[4];
+        sd->stopactiongroup(tosend);
+        serial->write((const char*)tosend,4);
+        delete []tosend;
+    }
 }

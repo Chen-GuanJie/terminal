@@ -44,7 +44,6 @@ void moveServosByArray(uint8_t* LobotTxBuf,LobotServo servos[], uint8_t Num, uin
 {
     uint8_t index = 7;
     uint8_t i = 0;
-    LobotTxBuf =new uint8_t[7+3*Num];
     if (Num < 1 || Num > 32 || !(Time > 0)) {
         return;                                          //舵机数不能为零和大与32，时间不能为零
     }
@@ -54,15 +53,79 @@ void moveServosByArray(uint8_t* LobotTxBuf,LobotServo servos[], uint8_t Num, uin
     LobotTxBuf[4] = Num;                               //要控制的舵机个数
     LobotTxBuf[5] = GET_LOW_BYTE(Time);                //取得时间的低八位
     LobotTxBuf[6] = GET_HIGH_BYTE(Time);               //取得时间的高八位
-
+    uint16_t a;
     for (i = 0; i < Num; i++) {                        //循环填充舵机ID和对应目标位置
         LobotTxBuf[index++] = servos[i].ID;              //填充舵机ID
-        LobotTxBuf[index++] = GET_LOW_BYTE(servos[i].Position); //填充目标位置低八位
-        LobotTxBuf[index++] = GET_HIGH_BYTE(servos[i].Position);//填充目标位置高八位
+        a=servos[i].Position;
+        LobotTxBuf[index++] = GET_LOW_BYTE(a); //填充目标位置低八位
+        LobotTxBuf[index++] = GET_HIGH_BYTE(a);//填充目标位置高八位
     }
 
 }
 
+
+/*********************************************************************************
+ * Function:  runActionGroup
+ * Description： 运行指定动作组
+ * Parameters:   NumOfAction:动作组序号, Times:执行次数
+ * Return:       无返回
+ * Others:       Times = 0 时无限循环
+ **********************************************************************************/
+void runActionGroup(uint8_t* LobotTxBuf,uint8_t numOfAction, uint16_t Times)
+{
+    LobotTxBuf[0] = LobotTxBuf[1] = FRAME_HEADER;  //填充帧头
+    LobotTxBuf[2] = 5;                      //数据长度，数据帧除帧头部分数据字节数，此命令固定为5
+    LobotTxBuf[3] = CMD_ACTION_GROUP_RUN;   //填充运行动作组命令
+    LobotTxBuf[4] = numOfAction;            //填充要运行的动作组号
+    LobotTxBuf[5] = GET_LOW_BYTE(Times);    //取得要运行次数的低八位
+    LobotTxBuf[6] = GET_HIGH_BYTE(Times);   //取得要运行次数的高八位
+
+}
+
+/*********************************************************************************
+ * Function:  stopActiongGroup
+ * Description： 停止动作组运行
+ * Parameters:   Speed: 目标速度
+ * Return:       无返回
+ * Others:
+ **********************************************************************************/
+void stopActionGroup(uint8_t* LobotTxBuf)
+{
+    LobotTxBuf[0] = FRAME_HEADER;     //填充帧头
+    LobotTxBuf[1] = FRAME_HEADER;
+    LobotTxBuf[2] = 2;                //数据长度，数据帧除帧头部分数据字节数，此命令固定为2
+    LobotTxBuf[3] = CMD_ACTION_GROUP_STOP;   //填充停止运行动作组命令
+
+}
+/*********************************************************************************
+ * Function:  setActionGroupSpeed
+ * Description： 设定指定动作组的运行速度
+ * Parameters:   NumOfAction: 动作组序号 , Speed:目标速度
+ * Return:       无返回
+ * Others:
+ **********************************************************************************/
+void setActionGroupSpeed(uint8_t* LobotTxBuf,uint8_t numOfAction, uint16_t Speed)
+{
+    LobotTxBuf[0] = LobotTxBuf[1] = FRAME_HEADER;   //填充帧头
+    LobotTxBuf[2] = 5;                       //数据长度，数据帧除帧头部分数据字节数，此命令固定为5
+    LobotTxBuf[3] = CMD_ACTION_GROUP_SPEED;  //填充设置动作组速度命令
+    LobotTxBuf[4] = numOfAction;             //填充要设置的动作组号
+    LobotTxBuf[5] = GET_LOW_BYTE(Speed);     //获得目标速度的低八位
+    LobotTxBuf[6] = GET_HIGH_BYTE(Speed);    //获得目标熟读的高八位
+
+}
+
+/*********************************************************************************
+ * Function:  setAllActionGroupSpeed
+ * Description： 设置所有动作组的运行速度
+ * Parameters:   Speed: 目标速度
+ * Return:       无返回
+ * Others:
+ **********************************************************************************/
+void setAllActionGroupSpeed(uint8_t* LobotTxBuf,uint16_t Speed)
+{
+    setActionGroupSpeed(LobotTxBuf,0xFF, Speed);  //调用动作组速度设定，组号为0xFF时设置所有组的速度
+}
 
 
 

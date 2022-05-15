@@ -16,8 +16,7 @@ class realtimeplot : public QWidget
 public:
     explicit realtimeplot(QWidget *parent = nullptr);
     ~realtimeplot();
-    template<typename T>
-    void set_data_source(T* source,int* num);
+    void set_data_source(uint16_t* source);
 private slots:
   void timerSlot();
 
@@ -29,8 +28,9 @@ private:
     AxisTag *mTag1;
     AxisTag *mTag2;
     QTimer mDataTimer;
-    double* source;
+    uint16_t* source;
     int* source_num;
+    uint16_t last_data;
 };
 
 #endif // REALTIMEPLOT_H

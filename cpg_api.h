@@ -1,17 +1,22 @@
 ﻿#pragma once
 #include <iostream>
+#include "matlab/CPG2C.h"
 
-typedef struct retval_t{
-    double* t;
-    double*angle;
-    int t_size;
-    int angle_size;
-}retval;
+
 class cpg_api
 {
 public:
-	cpg_api();
+    cpg_api();
 	~cpg_api();
-    static retval_t run(const double dv[], double tspan);
+    void run(const double dv[], double tspan);
 	bool test();
+    double* step_data;
+    double* step_time_data;
+    int step(int time);
+private:
+    coder::array<double, 2U> angle;
+    coder::array<double, 1U> t;
+    double time_now=0;
+    int index=0;
+    int data_size;
 };

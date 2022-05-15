@@ -21,5 +21,9 @@ typedef struct _lobot_servo_ {  //舵机ID,舵机目标位置
 
 void moveServo(uint8_t* LobotTxBuf,uint8_t servoID, uint16_t Position, uint16_t Time);
 void moveServosByArray(uint8_t* LobotTxBuf,LobotServo servos[], uint8_t Num, uint16_t Time);
+void runActionGroup(uint8_t* LobotTxBuf,uint8_t numOfAction, uint16_t Times);
+void stopActionGroup(uint8_t* LobotTxBuf);
+void setActionGroupSpeed(uint8_t* LobotTxBuf,uint8_t numOfAction, uint16_t Speed);
+void setAllActionGroupSpeed(uint8_t* LobotTxBuf,uint16_t Speed);
 
 #endif // SETTINGSDIALOG_H

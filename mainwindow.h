@@ -53,7 +53,7 @@
 #define MAINWINDOW_H
 
 #include <QtCore/QtGlobal>
-
+#include "cpg_api.h"
 #include <QMainWindow>
 
 #include <QtSerialPort/QSerialPort>
@@ -89,6 +89,7 @@ private slots:
 
     void handleError(QSerialPort::SerialPortError error);
 
+      void cpgtimerSlot();
 
     void on_pushButton_clicked();
 
@@ -96,15 +97,35 @@ private slots:
 
     void on_pushButton_pressed();
 
-    void on_pushButton_settime_clicked();
     void on_pushButton_5_clicked();
+
+    void on_pushButton_3_clicked();
+
+
+    void on_pushButton_7_clicked();
+
+    void on_pushButton_t_clicked();
+
+
+    void on_pushButton_2_clicked(bool checked);
+
+    void on_cpushButton_settime_clicked();
+
+    void on_cpushButton_8_clicked();
+
+    void on_cpushButton_9_clicked();
+
+    void on_pushButton_dz_clicked();
+
+    void on_pushButton_dz2_clicked();
+
+    void on_pushButton_dz3_clicked();
 
 private:
     void initActionsConnections();
 
 private:
     void showStatusMessage(const QString &message);
-
     Ui::MainWindow *ui;
     QLabel *status;
     Console *console;
@@ -112,6 +133,12 @@ private:
     QSerialPort *serial;
     myTimer *timer;
     serialdata* sd;
+    cpg_api* cpg;
+    QTimer *cpgTimer;
+    double* cpg_data_ptr;
+    double* cpg_time_ptr;
+    uint8_t *cpg_send ;
+    uint8_t cpg_pird=10;
 };
 
 #endif // MAINWINDOW_H

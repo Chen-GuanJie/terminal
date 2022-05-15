@@ -2,7 +2,7 @@
 #include<QDebug>
 #include <QTimerEvent>
 
-#define TIMER_TIMEOUT	(5*100)
+#define TIMER_TIMEOUT	100
 
 myTimer::myTimer(QObject *parent,serialdata* sd,QCustomPlot* cp)
     :QObject(parent)
