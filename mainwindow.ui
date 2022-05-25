@@ -608,7 +608,7 @@
      <x>0</x>
      <y>0</y>
      <width>1184</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuCalls">
@@ -626,6 +626,7 @@
     </property>
     <addaction name="actionConfigure"/>
     <addaction name="actionClear"/>
+    <addaction name="actiontcpip"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -926,6 +927,11 @@
   <action name="actiondocks">
    <property name="text">
     <string>docks</string>
+   </property>
+  </action>
+  <action name="actiontcpip">
+   <property name="text">
+    <string>tcpip</string>
    </property>
   </action>
  </widget>

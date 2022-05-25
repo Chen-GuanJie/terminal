@@ -1,5 +1,5 @@
 QT += widgets serialport
-QT += widgets printsupport
+QT += network widgets
 TARGET = terminal
 TEMPLATE = app
 QMAKE_CXXFLAGS_RELEASE -= -O
@@ -22,6 +22,7 @@ SOURCES += \
     matlab/rtGetInf.cpp \
     matlab/rtGetNaN.cpp \
     matlab/rt_nonfinite.cpp \
+    network/udp/server.cpp \
     qcustomplot.cpp \
     realtimeplot.cpp \
     serial/mytimer.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     matlab/rt_nonfinite.h \
     matlab/rtwtypes.h \
     matlab/tmwtypes.h \
+    network/udp/server.h \
     qcustomplot.h \
     realtimeplot.h \
     serial/mytimer.h \
