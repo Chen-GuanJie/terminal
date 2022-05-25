@@ -28,18 +28,6 @@ single::~single()
     delete ui;
 }
 
-/*
-void single::on_horizontalSlider_sliderMoved(int position)
-{
-    sdata->set_tx_angle((uint16_t)position,id-1);
-    ui->singlelineEdit->setText( QString::number(position, 10));
-    if(sdata->able_to_send){
-        sdata->able_to_send=false;
-        uint8_t *tosend =new uint8_t[10];
-        sdata->moveOne(tosend,(uint8_t)id,(uint16_t)position);
-        serial->write((const char*)tosend,10);
-    }
-}*/
 void single::set_serial_port(QSerialPort *s,uint8_t id,serialdata* sd){
     serial=s;
     this->id=id;

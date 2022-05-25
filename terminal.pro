@@ -2,6 +2,12 @@ QT += widgets serialport
 QT += widgets printsupport
 TARGET = terminal
 TEMPLATE = app
+QMAKE_CXXFLAGS_RELEASE -= -O
+QMAKE_CXXFLAGS_RELEASE -= -O1
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE -= -O3
+QMAKE_CXXFLAGS_RELEASE += -O0        # Release -O0
+
 
 SOURCES += \
     axistag.cpp \
